@@ -142,14 +142,19 @@
     .sync-badge.saving { background: #FFF7ED; border-color: #FDE68A; color: #D97706; }
     .sync-badge.error  { background: var(--merah-muda); border-color: #FECACA; color: var(--merah); }
 
-    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: clamp(8px,2.5vw,11px) clamp(8px,2.5vw,12px); border-radius: clamp(8px,2.5vw,12px); margin-bottom: 4px; background: #F8FAFC; border-left: 4px solid var(--hijau); }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: clamp(8px,2.5vw,11px) clamp(8px,2.5vw,12px); border-radius: clamp(8px,2.5vw,12px); margin-bottom: 4px; background: #F8FAFC; border-left: 4px solid var(--hijau); position: relative; overflow: hidden; }
     .tx-badge { background: var(--hijau); color: white; font-size: clamp(9px,2.5vw,10px); font-weight: 900; padding: 2px 7px; border-radius: 20px; margin-bottom: 3px; display: inline-block; }
-    .tx-left  { display: flex; align-items: center; gap: 8px; }
+    .tx-left  { display: flex; align-items: center; gap: 8px; flex: 1; }
     .tx-liter { font-size: clamp(12px,3.5vw,15px); font-weight: 900; color: var(--teks); }
     .tx-time  { font-size: clamp(10px,2.8vw,12px); color: var(--abu); font-weight: 700; }
-    .tx-right { text-align: right; }
+    .tx-right { text-align: right; margin-right: 40px; }
     .tx-harga { font-size: clamp(13px,3.8vw,16px); font-weight: 900; color: var(--hijau); }
     .tx-kem   { font-size: clamp(9px,2.5vw,11px); color: var(--abu); font-weight: 700; }
+    
+    .tx-actions { position: absolute; right: 0; top: 0; bottom: 0; width: 40px; display: flex; flex-direction: column; }
+    .btn-tx-edit { flex: 1; border: none; background: #F1F5F9; color: var(--biru); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+    .btn-tx-del  { flex: 1; border: none; background: #FEE2E2; color: var(--merah); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+
     .tx-empty { text-align: center; color: var(--abu); padding: clamp(10px,3vw,16px); font-size: clamp(12px,3.3vw,14px); }
 
     .nav { height: clamp(56px,14vw,70px); background: var(--putih); display: flex; flex-shrink: 0; box-shadow: 0 -3px 12px rgba(0,0,0,0.07); padding-bottom: env(safe-area-inset-bottom); }
@@ -188,7 +193,6 @@
 
 <div id="toast" class="toast"></div>
 
-<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-logo">⛽</div>
   <div class="login-title">POM Mini Toko Yon Jaya</div>
@@ -199,14 +203,13 @@
   <div id="login-status"></div>
 </div>
 
-<!-- MODAL STOK -->
 <div id="modal-stok" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-handle"></div>
     <div class="modal-title">⛽ Update Stok Bensin</div>
     <div class="modal-tab">
       <button id="tab-tambah" class="btn-tab on" onclick="gantiTab('tambah')">➕ Tambah</button>
-      <button id="tab-set"    class="btn-tab"    onclick="gantiTab('set')">🔧 Set Manual</button>
+      <button id="tab-set"     class="btn-tab"    onclick="gantiTab('set')">🔧 Set Manual</button>
     </div>
     <div class="modal-input-wrap">
       <span class="modal-input-icon" id="modal-icon">➕</span>
@@ -220,7 +223,6 @@
   </div>
 </div>
 
-<!-- HEADER -->
 <div class="header">
   <div>
     <div class="header-title">⛽ POM MINI TOKO YON JAYA</div>
@@ -232,7 +234,6 @@
   </div>
 </div>
 
-<!-- STOK BAR -->
 <div class="stok-bar">
   <div class="stok-label">
     <span>⛽ STOK BENSIN</span>
@@ -245,9 +246,7 @@
   <div id="stok-warn" class="stok-warning">⚠️ STOK HAMPIR HABIS! SEGERA ISI!</div>
 </div>
 
-<!-- APP -->
 <div class="app">
-  <!-- PAGE JUAL -->
   <div id="p-jual" class="slide">
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:clamp(6px,2vw,10px);">
@@ -310,7 +309,6 @@
     </div>
   </div>
 
-  <!-- PAGE LAPORAN -->
   <div id="p-laporan" class="slide">
     <div style="text-align:center;padding:clamp(4px,1.5vw,8px) 0;">
       <span style="font-size:clamp(32px,9vw,46px);">📊</span>
@@ -344,19 +342,15 @@
   </div>
 </div>
 
-<!-- NAV -->
 <div class="nav">
   <button id="n1" class="n-btn on" onclick="go(1)"><span class="n-icon">💰</span><b>JUAL</b></button>
   <button id="n2" class="n-btn"    onclick="go(2)"><span class="n-icon">📊</span><b>LAPORAN</b></button>
 </div>
 
-<!-- FIREBASE SDK -->
 <script type="module">
-  import { initializeApp }                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-                                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs, deleteDoc, writeBatch }
-                                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   // ── FIREBASE CONFIG ──
   const firebaseConfig = {
@@ -400,6 +394,8 @@
   window.simpanStok   = simpanStok;
   window.downloadPDF  = downloadPDF;
   window.resetHarian  = resetHarian;
+  window.editTx       = editTx;
+  window.delTx        = delTx;
 
   // ── JAM ──
   function updateJam() {
@@ -501,6 +497,45 @@
       cachedTx = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderLaporan();
     });
+  }
+
+  // ── ACTION EDIT/HAPUS ──
+  function editTx(id) {
+    const t = cachedTx.find(x => x.id === id);
+    if (!t) return;
+    
+    // Konfirmasi edit
+    if(!confirm("Tarik data transaksi ini ke layar JUAL untuk diedit?\n(Catatan: Anda tetap harus menghapus transaksi yang salah secara manual)")) return;
+
+    go(1); // Pindah ke layar jual
+    sm('Rp'); // Default ke Rp
+    document.getElementById('i1').value = t.harga;
+    h(t.harga);
+    document.getElementById('i2').value = t.bayar;
+    k(t.bayar);
+    toast("✏️ Data ditarik. Silakan sesuaikan.", "warn");
+  }
+
+  async function delTx(id) {
+    const t = cachedTx.find(x => x.id === id);
+    if (!t) return;
+
+    if(!confirm(`Hapus transaksi ini?\n⛽ ${t.liter}L - Rp ${t.harga.toLocaleString('id-ID')}\nStok akan dikembalikan.`)) return;
+
+    try {
+      // 1. Hapus dokumen transaksi
+      await deleteDoc(doc(db, 'users', currentUser.uid, 'transaksi', id));
+      
+      // 2. Kembalikan stok
+      const stokBaru = parseFloat(((window._stok || 0) + t.liter).toFixed(2));
+      window._stok = stokBaru;
+      await saveSettings({ stok: stokBaru });
+      updateStokUI(stokBaru);
+
+      toast("🗑️ Transaksi dihapus & stok kembali", "success");
+    } catch(e) {
+      toast("❌ Gagal hapus: " + e.message, "error");
+    }
   }
 
   // ── NOTIF BANNER ──
@@ -679,6 +714,7 @@
 
     const el = document.getElementById('tx-list');
     if (!txHari.length) { el.innerHTML = '<div class="tx-empty">Belum ada transaksi hari ini</div>'; return; }
+    
     el.innerHTML = txHari.map((t, i) => `
       <div class="tx-item">
         <div class="tx-left"><div>
@@ -689,6 +725,10 @@
         <div class="tx-right">
           <div class="tx-harga">Rp ${t.harga.toLocaleString('id-ID')}</div>
           <div class="tx-kem">Kembalian Rp ${t.kembali.toLocaleString('id-ID')}</div>
+        </div>
+        <div class="tx-actions">
+          <button class="btn-tx-edit" onclick="editTx('${t.id}')">✏️</button>
+          <button class="btn-tx-del" onclick="delTx('${t.id}')">🗑️</button>
         </div>
       </div>`).join('');
   }
